@@ -44,6 +44,16 @@ public class ConsumerController {
     }
     
     /**
+     * 测试OpenFeign客户端调用
+     * 用于测试Gateway路由
+     */
+    @GetMapping("/feign-test")
+    public String feignTest() {
+        log.info("Consumer服务的feign-test接口被调用");
+        return "Hello from Consumer's feign-test! 正在通过Feign调用Provider: " + providerClient.hello();
+    }
+    
+    /**
      * 断路器A的本地降级方法
      * 优先级高于Feign客户端的降级类
      */

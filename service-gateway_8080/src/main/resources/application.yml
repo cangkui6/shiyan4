@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true # 开启从注册中心动态创建路由的功能
+          lower-case-service-id: true # 使用小写服务名，默认是大写
+      routes:
+        # Provider服务路由 - 不去除前缀
+        - id: service-provider-route
+          uri: lb://service-provider # 使用lb://开头的uri，从Eureka注册中心获取服务
+          predicates:
+            - Path=/provider/**  # 路径匹配
+          filters:
+            - RewritePath=/provider/(?<segment>.*), /provider/$\{segment} # 保留前缀
+            
+        # Consumer服务路由 - 不去除前缀
+        - id: service-consumer-route
+          uri: lb://service-consumer
+          predicates:
+            - Path=/consumer/**
+          filters:
+            - RewritePath=/consumer/(?<segment>.*), /consumer/$\{segment} # 保留前缀
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+# 暴露actuator端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
