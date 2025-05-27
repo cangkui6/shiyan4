@@ -28,11 +28,14 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     
     // 无需认证的路径
     private static final List<String> WHITELIST = Arrays.asList(
-            "/actuator",
-            "/login",
-            "/public-api",  // 添加公开API端点到白名单
-            "/lb-test",     // 负载均衡测试路径
-            "/cors-test"    // 添加CORS测试路径到白名单
+            "/actuator",           // 监控端点
+            "/cors-test/login",    // CORS测试登录接口
+            "/cors-test/public-api", // CORS测试公开接口
+            "/lb-test",            // 负载均衡测试路径
+            "/cors-test.html",     // CORS测试页面
+            "/favicon.ico",        // 网站图标
+            "/static/",            // 静态资源
+            "/webjars/"           // WebJars资源
     );
     
     // 模拟的有效token

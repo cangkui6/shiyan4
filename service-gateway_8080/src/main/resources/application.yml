@@ -10,7 +10,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: ["*"]
+            allowedOriginPatterns: ["*"]  # 使用pattern而不是origin，解决与allowCredentials的冲突
             allowedMethods:
               - GET
               - POST
@@ -20,6 +20,9 @@ spring:
             allowedHeaders: "*"
             allowCredentials: true
             maxAge: 3600
+            exposedHeaders:
+              - Authorization
+              - X-Auth-Token
       discovery:
         locator:
           enabled: true # 开启从注册中心动态创建路由的功能
