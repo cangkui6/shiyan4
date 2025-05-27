@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/provider")
@@ -39,5 +41,15 @@ public class ProviderController {
     public String loadBalanceTest() {
         logger.info("收到负载均衡测试请求，当前实例端口：{}", serverPort);
         return "负载均衡测试响应，来自Provider实例，端口：" + serverPort;
+    }
+    
+    /**
+     * 错误测试端点 - 用于测试熔断机制
+     * 始终返回500错误
+     */
+    @GetMapping("/error")
+    public String error() {
+        logger.info("收到 /provider/error 请求，返回异常，当前实例端口：{}", serverPort);
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "模拟服务错误，用于测试熔断");
     }
 }

@@ -60,6 +60,54 @@ spring:
           filters:
             - RewritePath=/consumer/(?<segment>.*), /consumer/${segment} # 保留前缀
 
+# Resilience4j 配置
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000  # 10秒
+        permittedNumberOfCallsInHalfOpenState: 5
+        registerHealthIndicator: true
+        slowCallRateThreshold: 50
+    instances:
+      providerCircuitBreaker:
+        baseConfig: default
+        waitDurationInOpenState: 20000  # 20秒
+      consumerCircuitBreaker:
+        baseConfig: default
+        waitDurationInOpenState: 15000  # 15秒
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 3s
+        cancelRunningFuture: true
+    instances:
+      providerCircuitBreaker:
+        baseConfig: default
+        timeoutDuration: 2s
+      consumerCircuitBreaker:
+        baseConfig: default
+        timeoutDuration: 4s
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 100ms
+        retryExceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.HttpServerErrorException
+    instances:
+      providerRetry:
+        baseConfig: default
+        maxAttempts: 3
+      consumerRetry:
+        baseConfig: default
+        maxAttempts: 2
+
 eureka:
   client:
     service-url:
@@ -77,6 +125,12 @@ management:
   endpoint:
     health:
       show-details: always
+      group:
+        circuit-breakers:
+          include: circuitBreakers
+  health:
+    circuitbreakers:
+      enabled: true
 
 # 禁用Spring Security的默认表单登录
 spring.security.user.password: disabled
