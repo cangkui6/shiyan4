@@ -31,7 +31,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             "/actuator",
             "/login",
             "/public-api",  // 添加公开API端点到白名单
-            "/lb-test"      // 负载均衡测试路径
+            "/lb-test",     // 负载均衡测试路径
+            "/cors-test"    // 添加CORS测试路径到白名单
     );
     
     // 模拟的有效token

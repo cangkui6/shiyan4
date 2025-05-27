@@ -6,6 +6,20 @@ spring:
     name: service-gateway
   cloud:
     gateway:
+      # 全局CORS配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: ["*"]
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
       discovery:
         locator:
           enabled: true # 开启从注册中心动态创建路由的功能
@@ -49,7 +63,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-    instance-id: gateway-8080
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
 
 # 暴露actuator端点
 management:
@@ -60,3 +74,6 @@ management:
   endpoint:
     health:
       show-details: always
+
+# 禁用Spring Security的默认表单登录
+spring.security.user.password: disabled
